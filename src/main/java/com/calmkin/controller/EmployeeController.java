@@ -17,7 +17,7 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
-    @ResponseBody
+
     @PostMapping("/login")  //返回统一的响应信息
     public R<Employee> login(HttpServletRequest request, @RequestBody Employee employee)  //我们需要存储session或者读取session，这就需要通过request对象进行操作
     {
@@ -44,6 +44,13 @@ public class EmployeeController {
 //      6、登录成功，将员工id存入Session并返回登录成功结果
         request.getSession().setAttribute("employee",emp.getId());
         return R.success(emp);
+    }
+
+    @PostMapping("/logout")
+    public R<String> logout(HttpServletRequest httpServletRequest)
+    {
+        httpServletRequest.removeAttribute("employee");
+        return R.success("logout success");
     }
 
 }
