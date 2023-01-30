@@ -44,22 +44,22 @@ public class LoginCheckFilter implements Filter {
         {
             filterChain.doFilter(servletRequest,servletResponse);
             //打印日志
-            System.out.println("不需要处理，则直接放行");
+//            System.out.println("不需要处理，则直接放行");
 
             return;
         }
 
        // 4、判断登录状态，如果已登录，则直接放行,是否登录，直接在请求中查看是否存在响应的session即可
-        if(request.getSession().getAttribute("userinfo")!=null)
+        if(request.getSession().getAttribute("employee")!=null)
         {
             filterChain.doFilter(servletRequest,servletResponse);
             //打印日志
-            System.out.println("已登录,直接放行");
+//            System.out.println("已登录,直接放行===>"+request.getSession().getAttribute("employee"));
             return;
         }
 
 
-        System.out.println("用户未登录");
+//        System.out.println("用户未登录");
 
        // 5、如果未登录则返回未登录结果,因为这里是过滤器，返回值不是R类型，所以必须要用输出流的方式向前端返回响应的结果,之前原生servlet进行响应的时候也是直接用输出流的
         response.getWriter().write(JSON.toJSONString(R.error("NOTLOGIN")));

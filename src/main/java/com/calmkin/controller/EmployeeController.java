@@ -10,6 +10,9 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Date;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/employee")
@@ -49,8 +52,28 @@ public class EmployeeController {
     @PostMapping("/logout")
     public R<String> logout(HttpServletRequest httpServletRequest)
     {
-        httpServletRequest.removeAttribute("employee");
+        httpServletRequest.getSession().removeAttribute("employee");
         return R.success("logout success");
+    }
+
+    @PostMapping
+    public R<String> save(@RequestBody Employee employee, HttpServletRequest request)   //这里需要request参数是因为，设置创建人的时候，需要用到当前登录的用户id，这个要从session中获取
+    {
+        //System.out.println("员工信息"+ employee.toString());
+
+        //存库的时候，id是默认自动加上去的，status默认为1，密码可以设置一个默认密码，假设为123456，后面让员工自己去修改就行
+        //密码要经过加密之后才能存进数据库
+        employee.setPassword( DigestUtils.md5DigestAsHex("123456".getBytes()) );
+        //设置创建时间
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        //设置创建人（当前登录用户）
+        Long userId = (Long) request.getSession().getAttribute("employee");
+        employee.setCreateUser(userId);
+        employee.setUpdateUser(userId);
+
+        employeeService.save(employee);
+        return R.success("添加员工成功");
     }
 
 }
