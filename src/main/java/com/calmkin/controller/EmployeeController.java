@@ -1,10 +1,12 @@
 package com.calmkin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.calmkin.common.R;
 import com.calmkin.mapper.EmployeeMapper;
 import com.calmkin.pojo.Employee;
 import com.calmkin.service.EmployeeService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
@@ -74,6 +76,28 @@ public class EmployeeController {
 
         employeeService.save(employee);
         return R.success("添加员工成功");
+    }
+
+    //请求网址: http://localhost:8080/employee/page?page=1&pageSize=10
+    @GetMapping("/page")
+    public R<Page> getAll(int page,int pageSize,String name) //如果路径变量名和形参名称一致的话，就不需要加PathVariable
+    {
+        //构造分页构造器
+        Page<Employee> pageInfo = new Page<>(page,pageSize);    //初始化当前页码和页面大小
+
+        //构造条件构造器
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+
+        //因为刚进入页面的时候，name为null，所以我们要让name不为null时执行条件查询，name为null时不执行条件查询
+        lqw.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+
+        //按照更新时间降序排列
+        lqw.orderByDesc(Employee::getUpdateTime);
+        //执行分页查询
+        Page<Employee> Retpage = employeeService.page(pageInfo, lqw);
+
+
+        return R.success(Retpage);
     }
 
 }
