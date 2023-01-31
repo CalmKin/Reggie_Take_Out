@@ -100,4 +100,14 @@ public class EmployeeController {
         return R.success(Retpage);
     }
 
+    @PutMapping
+    public R<String> update(@RequestBody Employee employee,HttpServletRequest request) //因为是根据json传过来的
+    {
+        //这里传过来的对象，状态已经改过来了,只需要修改其他的信息即可
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        employeeService.updateById(employee);
+        return R.success("update success");
+
+    }
 }
