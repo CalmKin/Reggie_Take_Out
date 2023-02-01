@@ -45,5 +45,19 @@ public class CategoryController {
         return R.success("删除分类成功");
     }
 
+    /**
+     * 根据id修改分类的信息
+     * 请求地址：http://localhost:8080/category
+     * @param category
+     * @return
+     */
+    @PutMapping
+    public R<String> update(@RequestBody Category category)
+    {
+        LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Category::getId,category.getId());
+        categoryService.update(category,lqw);
+        return R.success("修改成功");
+    }
 
 }
