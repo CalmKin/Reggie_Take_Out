@@ -24,4 +24,10 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler
+    public R<String> exceptionHandler(CustomException ex)  //捕获所有完整性约束相关的异常
+    {
+        return R.error(ex.getMessage());
+    }
+
 }

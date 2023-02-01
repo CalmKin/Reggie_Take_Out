@@ -37,4 +37,13 @@ public class CategoryController {
         return R.success(pageRet);
     }
 
+    //删除请求路径：http://localhost:8080/category?ids=1397844263642378242
+    @DeleteMapping
+    public R<String> remove(Long ids)
+    {
+        categoryService.deleteById(ids);
+        return R.success("删除分类成功");
+    }
+
+
 }
