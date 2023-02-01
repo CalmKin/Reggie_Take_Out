@@ -18,14 +18,17 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info("开始执行插入操作");
         metaObject.setValue("createTime", LocalDateTime.now());
         metaObject.setValue("updateTime",LocalDateTime.now());
-        metaObject.setValue("createUser",new Long(1));
-        metaObject.setValue("updateUser",new Long(1));
+        metaObject.setValue("createUser",BaseContext.getID());
+        metaObject.setValue("updateUser",BaseContext.getID());
 
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        metaObject.setValue("createTime", LocalDateTime.now());
+
+        long id = Thread.currentThread().getId();
+        log.info("当前线程ID为{}",id);
+        metaObject.setValue("updateUser",BaseContext.getID());
         metaObject.setValue("updateTime",LocalDateTime.now());
     }
 }

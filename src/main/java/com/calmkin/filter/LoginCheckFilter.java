@@ -2,7 +2,9 @@ package com.calmkin.filter;
 
 
 import com.alibaba.fastjson.JSON;
+import com.calmkin.common.BaseContext;
 import com.calmkin.common.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -11,7 +13,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@Slf4j
 @WebFilter(filterName = "loginCheckFilter",urlPatterns = "/*")          //添加注解  方便boot扫描到,设置拦截器名称和拦截路径
 public class LoginCheckFilter implements Filter {
     //用于路径比较的工具,因为我们是用通配符来进行路径比较，而不是直接进行字符串比较
@@ -19,6 +21,10 @@ public class LoginCheckFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
+        long id = Thread.currentThread().getId();
+        log.info("当前线程ID为{}",id);
+
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;   //强转是为了能够获取访问的uri
         HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -50,6 +56,8 @@ public class LoginCheckFilter implements Filter {
        // 4、判断登录状态，如果已登录，则直接放行,是否登录，直接在请求中查看是否存在响应的session即可
         if(request.getSession().getAttribute("employee")!=null)
         {
+            BaseContext.setID((Long) request.getSession().getAttribute("employee"));
+
             filterChain.doFilter(servletRequest,servletResponse);
             //打印日志
 //            System.out.println("已登录,直接放行===>"+request.getSession().getAttribute("employee"));

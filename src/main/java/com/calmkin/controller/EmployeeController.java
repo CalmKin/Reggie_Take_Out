@@ -6,6 +6,7 @@ import com.calmkin.common.R;
 import com.calmkin.mapper.EmployeeMapper;
 import com.calmkin.pojo.Employee;
 import com.calmkin.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.time.LocalDateTime;
-
+@Slf4j
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
@@ -103,6 +104,9 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(@RequestBody Employee employee,HttpServletRequest request) //因为是根据json传过来的
     {
+        long id = Thread.currentThread().getId();
+        log.info("当前线程ID为{}",id);
+
         //这里传过来的对象，状态已经改过来了,只需要修改其他的信息即可
         //employee.setUpdateTime(LocalDateTime.now());
         //employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
