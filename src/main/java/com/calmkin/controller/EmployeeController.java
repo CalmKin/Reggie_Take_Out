@@ -116,7 +116,7 @@ public class EmployeeController {
 
     //表单数据回显请求网址http://localhost:8080/employee/1619922121295069185
 
-    @GetMapping("/{id}")    //获取路径变量
+    @GetMapping("/{id}")    //获取路径变量,因为这里是rest风格，并不是?id=xxx这种类型，要获取这种类型的变量就需要用这个注解来获取
     public R<Employee> getById(@PathVariable Long id)
     {
         Employee employee = employeeService.getById(id);

@@ -1,6 +1,8 @@
 server:
   port: 8080
 spring:
+  main:
+    banner-mode: off
   application:
     name: reggie_take_out
   datasource:
@@ -18,3 +20,4 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+    banner: off   #关闭mp的logo显示
