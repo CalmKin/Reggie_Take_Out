@@ -22,8 +22,8 @@ public class LoginCheckFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        long id = Thread.currentThread().getId();
-        log.info("当前线程ID为{}",id);
+//        long id = Thread.currentThread().getId();
+//        log.info("当前线程ID为{}",id);
 
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;   //强转是为了能够获取访问的uri

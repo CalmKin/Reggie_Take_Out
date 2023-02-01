@@ -26,8 +26,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
 
-        long id = Thread.currentThread().getId();
-        log.info("当前线程ID为{}",id);
+//        long id = Thread.currentThread().getId();
+//        log.info("当前线程ID为{}",id);
         metaObject.setValue("updateUser",BaseContext.getID());
         metaObject.setValue("updateTime",LocalDateTime.now());
     }

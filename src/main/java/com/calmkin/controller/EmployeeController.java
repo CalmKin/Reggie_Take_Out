@@ -104,8 +104,8 @@ public class EmployeeController {
     @PutMapping
     public R<String> update(@RequestBody Employee employee,HttpServletRequest request) //因为是根据json传过来的
     {
-        long id = Thread.currentThread().getId();
-        log.info("当前线程ID为{}",id);
+//        long id = Thread.currentThread().getId();
+//        log.info("当前线程ID为{}",id);
 
         //这里传过来的对象，状态已经改过来了,只需要修改其他的信息即可
         //employee.setUpdateTime(LocalDateTime.now());
