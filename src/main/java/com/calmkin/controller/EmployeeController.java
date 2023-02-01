@@ -107,7 +107,17 @@ public class EmployeeController {
         employee.setUpdateTime(LocalDateTime.now());
         employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         employeeService.updateById(employee);
-        return R.success("update success");
-
+        return R.success("update succe  ss");
     }
+
+    //表单数据回显请求网址http://localhost:8080/employee/1619922121295069185
+
+    @GetMapping("/{id}")    //获取路径变量
+    public R<Employee> getById(@PathVariable Long id)
+    {
+        Employee employee = employeeService.getById(id);
+        if(employee!=null) return R.success(employee);
+        else return R.error("未找到对应员工信息");   //这里有可能会因为自己在点击编辑之前，别人把这个用户删掉
+    }
+
 }

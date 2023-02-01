@@ -30,8 +30,6 @@ public class LoginCheckFilter implements Filter {
         // 然后就是后端的页面，我们不用拦截，因为用户看到后端页面其实无所谓，关键是不能看到页面上的数据，这些数据是通过ajax发送请求之后从响应中取出来的
         //所以我们只拦截针对controller请求，不拦截页面请求
 
-        System.out.println(requestURI);
-
         String [] unnecessary = new String[]{
             "/employee/login",      //注意这里不能写死成login.html，因为不止需要放行login.html文件，还有login.html里面引用的所有文件
              "/employee/logout",
