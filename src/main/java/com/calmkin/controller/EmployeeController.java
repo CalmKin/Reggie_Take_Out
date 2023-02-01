@@ -67,12 +67,12 @@ public class EmployeeController {
         //密码要经过加密之后才能存进数据库
         employee.setPassword( DigestUtils.md5DigestAsHex("123456".getBytes()) );
         //设置创建时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        //employee.setCreateTime(LocalDateTime.now());
+        //employee.setUpdateTime(LocalDateTime.now());
         //设置创建人（当前登录用户）
-        Long userId = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(userId);
-        employee.setUpdateUser(userId);
+       //Long userId = (Long) request.getSession().getAttribute("employee");
+        //employee.setCreateUser(userId);
+        //employee.setUpdateUser(userId);
 
         employeeService.save(employee);
         return R.success("添加员工成功");
@@ -104,8 +104,8 @@ public class EmployeeController {
     public R<String> update(@RequestBody Employee employee,HttpServletRequest request) //因为是根据json传过来的
     {
         //这里传过来的对象，状态已经改过来了,只需要修改其他的信息即可
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        //employee.setUpdateTime(LocalDateTime.now());
+        //employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         employeeService.updateById(employee);
         return R.success("update succe  ss");
     }
