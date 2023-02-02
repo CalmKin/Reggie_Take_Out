@@ -8,6 +8,8 @@ import com.calmkin.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -58,6 +60,18 @@ public class CategoryController {
         lqw.eq(Category::getId,category.getId());
         categoryService.update(category,lqw);
         return R.success("修改成功");
+    }
+
+    //虽然是get请求，参数在路径上，但是如果形参里面这个对象的存在路径上的请求参数名的属性，那么就能构造一个有指定属性值的对象
+    @GetMapping("/list")
+    public R<List<Category>> getCategoryList(Category category)
+    {
+        LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(category.getType()!=null,Category::getType,category.getType());
+        lqw.orderByAsc(Category::getSort);
+        lqw.orderByDesc(Category::getUpdateTime);
+        List<Category> list = categoryService.list(lqw);
+        return R.success(list);
     }
 
 }

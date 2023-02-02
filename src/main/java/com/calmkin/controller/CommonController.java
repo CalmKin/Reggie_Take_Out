@@ -33,6 +33,15 @@ public class CommonController {
 
         //用UUID+文件格式后缀来代替原始的文件名，防止重名
         String fileName = UUID.randomUUID().toString()+suffix;
+
+        //判断指定目录是否存在，如果不存在的话，需要手动创建，否则会报错
+        File dir = new File(filePath);
+        if(!dir.exists())
+        {
+            //目录不存在，需要创建
+            dir.mkdirs();
+        }
+
         try {
             //file只是一个临时文件，需要转存,文件存放路径和文件名都是动态生成的
             file.transferTo(new File(filePath + fileName));

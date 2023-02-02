@@ -23,4 +23,4 @@ mybatis-plus:
     banner: off   #关闭mp的logo显示
 
 reggie:
-  filePath: D:/
+  filePath: D:/ReggieImageRepository/
