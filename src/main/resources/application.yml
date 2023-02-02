@@ -21,3 +21,6 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
     banner: off   #关闭mp的logo显示
+
+reggie:
+  filePath: D:/

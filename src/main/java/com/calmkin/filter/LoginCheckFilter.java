@@ -40,7 +40,8 @@ public class LoginCheckFilter implements Filter {
             "/employee/login",      //注意这里不能写死成login.html，因为不止需要放行login.html文件，还有login.html里面引用的所有文件
              "/employee/logout",
             "/backend/**",
-            "/front/**"
+            "/front/**",
+            "/common/**"
         };
 
        // 3、如果不需要处理，则直接放行
