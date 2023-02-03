@@ -111,6 +111,28 @@ public class DishController {
         return R.success("修改信息成功");
     }
 
+    /**
+     * 根据菜品分类查询所有菜品
+     * @param dish
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> getDishes(Dish dish)
+    {
+
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Dish::getCategoryId,dish.getCategoryId());
+
+        //只有起售的菜品才进行显示
+        lambdaQueryWrapper.eq(Dish::getStatus,1);
+        //排序展示
+        lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(lambdaQueryWrapper);
+
+        return R.success(list);
+    }
+
+
 }
 
 
