@@ -121,7 +121,7 @@ public class DishController {
     {
 
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Dish::getCategoryId,dish.getCategoryId());
+        lambdaQueryWrapper.eq(dish.getCategoryId()!=null,Dish::getCategoryId,dish.getCategoryId());
 
         //只有起售的菜品才进行显示
         lambdaQueryWrapper.eq(Dish::getStatus,1);
@@ -131,6 +131,8 @@ public class DishController {
 
         return R.success(list);
     }
+
+
 
 
 }
