@@ -28,6 +28,11 @@ public class DishController {
     @Autowired
     private CategoryService categoryService;    //用于设置dishDTO的分页数据查询用的
 
+    /**
+     * 新增菜品功能
+     * @param dishDto
+     * @return
+     */
     @PostMapping
     public R<String> postDish(@RequestBody DishDto dishDto)
     {
@@ -37,6 +42,7 @@ public class DishController {
     }
 
     /**
+     * 菜品信息分页查询
      * 请求网址: http://localhost:8080/dish/page?page=1&=10
      * @return
      */
@@ -80,6 +86,30 @@ public class DishController {
         return R.success(dishDtoPage);
     }
 
+    /**
+     * 请求网址: http://localhost:8080/dish/1397849739276890114
+     * 编辑菜品信息数据回显——根据id查询菜品全部信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<DishDto> data_reflect(@PathVariable Long id)       //因为回显的数据除了dish的信息，还有flavor的信息，所以回显dishdto对象
+    {
+        DishDto dishDto = dishService.get_with_id(id);
+        return R.success(dishDto);
+    }
+
+    /**
+     * 编辑菜品信息
+     * @param dishDto
+     * @return
+     */
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto)
+    {
+        dishService.update_with_flavor(dishDto);
+        return R.success("修改信息成功");
+    }
 
 }
 
