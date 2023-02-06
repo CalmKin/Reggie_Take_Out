@@ -133,7 +133,29 @@ public class DishController {
     }
 
 
+    /**
+     * 批量进行禁用菜品
+     * @param targetStatus
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/{targetStatus}")
+    public R<String> changeStatusByIds(@PathVariable int targetStatus,@RequestParam List<Long> ids)
+    {
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Dish::getId,ids);
 
+        List<Dish> dishes = dishService.listByIds(ids);
+
+        dishes=dishes.stream().map((item)->{
+            item.setStatus(targetStatus);
+            return item;
+        }).collect(Collectors.toList());
+
+        dishService.updateBatchById(dishes);
+        
+        return R.success("禁用菜品成功");
+    }
 
 }
 
