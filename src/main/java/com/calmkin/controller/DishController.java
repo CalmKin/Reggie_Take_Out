@@ -160,18 +160,18 @@ public class DishController {
     }
 
     /**
-     *
+     * 根据id批量删除菜品，逻辑和批量禁用菜品一样，需要判断是否关联套餐
      * @param ids
      * @return
      */
+    @DeleteMapping
+    public R<String> deleteByIds(@RequestParam List<Long> ids)
+    {
 
-//    @DeleteMapping
-//    public R<String> deleteByIds(@RequestParam List<Long> ids)
-//    {
-//        LambdaQueryWrapper<>
-//
-//
-//    }
+        
+
+        return null;
+    }
 
 }
 

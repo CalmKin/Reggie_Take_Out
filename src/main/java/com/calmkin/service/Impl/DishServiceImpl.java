@@ -2,7 +2,6 @@ package com.calmkin.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.calmkin.common.R;
 import com.calmkin.dto.DishDto;
 import com.calmkin.mapper.DishMapper;
 import com.calmkin.pojo.Dish;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,11 +27,42 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish>
         implements DishService {
     @Autowired
     private DishFlavorService dishFlavorService;
-    @Autowired
-    private SetmealDishService setmealDishService;
+
+    /**
+     * 公共方法，用于判断某个菜品是否关联了套餐
+     * @param dish
+     * @return
+     */
+    @Override
+    public boolean check(Dish dish) {
+        boolean flag = true;
+        //先根据菜品id，在setmealDIsh里面找到关联套餐的id
+        LambdaQueryWrapper<SetmealDish> setmealDishQueryWrapper = new LambdaQueryWrapper<>();
+        setmealDishQueryWrapper.eq(SetmealDish::getDishId,dish.getId());
+        //获取当前菜品关联的所有套餐
+        List<SetmealDish> setMealList = setmealDishService.list(setmealDishQueryWrapper);
+        //如果没有关联套餐，可以直接改变状态
+        //如果关联了套餐，看targetStatus是否为0
+        if (setMealList!=null) {
+            for (SetmealDish setmealDish : setMealList) {
+                LambdaQueryWrapper<Setmeal> setmealLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                setmealLambdaQueryWrapper.eq(Setmeal::getId, setmealDish.getSetmealId());
+                Setmeal one = setmealService.getOne(setmealLambdaQueryWrapper);
+                //如果当前套餐正在启用
+                if (one.getStatus() == 1) {
+                    flag = false;
+                    break;      //只要关联一个套餐，都不能禁用
+                }
+            }
+        }
+        return flag;
+    }
 
     @Autowired
+    private SetmealDishService setmealDishService;
+    @Autowired
     private SetmealService setmealService;
+
     @Override
     @Transactional      //涉及多表操作，需要开启事务
     public void saveWithFlavor(DishDto dishDto) {
@@ -113,27 +142,14 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish>
 
         for(int i=0;i<dishes.size();i++)
         {
-            boolean flag = true;
-            //先根据菜品id，在setmealDIsh里面找到关联套餐的id
-            LambdaQueryWrapper<SetmealDish> setmealDishQueryWrapper = new LambdaQueryWrapper<>();
-            setmealDishQueryWrapper.eq(SetmealDish::getDishId,dishes.get(i).getId());
-            //获取当前菜品关联的所有套餐
-            List<SetmealDish> setMealList = setmealDishService.list(setmealDishQueryWrapper);
-            //如果没有关联套餐，可以直接改变状态
-            //如果关联了套餐，看targetStatus是否为0
-            if (setMealList!=null && targetStatus == 0) {
-                for (SetmealDish setmealDish : setMealList) {
-                    LambdaQueryWrapper<Setmeal> setmealLambdaQueryWrapper = new LambdaQueryWrapper<>();
-                    setmealLambdaQueryWrapper.eq(Setmeal::getId, setmealDish.getSetmealId());
-                    Setmeal one = setmealService.getOne(setmealLambdaQueryWrapper);
-                    //如果当前套餐正在启用
-                    if (one.getStatus() == 1) {
-                        flag = false;
-                        break;      //只要关联一个套餐，都不能禁用
-                    }
-                }
-            }
-            if (flag)
+            Dish dish = dishes.get(i);
+            boolean results=false;
+
+
+            if(targetStatus==0) results = this.check(dish);
+            else results=true;
+
+            if (results)
                 dishes.get(i).setStatus(targetStatus);
 
             else check=true;
