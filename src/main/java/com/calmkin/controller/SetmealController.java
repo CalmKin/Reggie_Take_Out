@@ -3,9 +3,11 @@ package com.calmkin.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.calmkin.common.R;
+import com.calmkin.dto.DishDto;
 import com.calmkin.dto.SetmealDto;
 import com.calmkin.pojo.Category;
 import com.calmkin.pojo.Setmeal;
+import com.calmkin.pojo.SetmealDish;
 import com.calmkin.service.CategoryService;
 import com.calmkin.service.SetmealDishService;
 import com.calmkin.service.SetmealService;
@@ -112,6 +114,34 @@ public class SetmealController {
         return R.success("修改套餐状态成功");
     }
 
+
+    /**
+     * 根据id查询指定套餐的所有信息，用于修改套餐信息的数据回显
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getInfoById(@PathVariable Long id)
+    {
+        SetmealDto setmealDto = new SetmealDto();
+        Setmeal setmeal = setmealService.getById(id);
+
+        BeanUtils.copyProperties(setmeal,setmealDto);
+        //查询这个套餐关联的所有菜品
+        LambdaQueryWrapper<SetmealDish> lqw =new LambdaQueryWrapper<>();
+        lqw.eq(SetmealDish::getSetmealId,id);
+        List<SetmealDish> lists = setmealDishService.list(lqw);
+        setmealDto.setSetmealDishes(lists);
+
+        //单独查询这个套餐对应分类的名称
+        Category category = categoryService.getById(setmeal.getCategoryId());
+        setmealDto.setCategoryName(category.getName());
+
+        return R.success(setmealDto);
+    }
+
+
+    
 
 
 }
