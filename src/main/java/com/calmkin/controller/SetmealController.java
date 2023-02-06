@@ -34,6 +34,14 @@ public class SetmealController {
         return R.success("添加套餐成功");
     }
 
+    /**
+     * 套餐信息分页查询，套餐分类名称需要单独查询
+     * 请求网址: http://localhost:8080/setmeal/page?page=1&pageSize=10
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
 
     @GetMapping("/page")
     public R<Page> getPage(int page,int pageSize,String name)
@@ -42,6 +50,9 @@ public class SetmealController {
         Page<SetmealDto> setmealDtoPage = new Page<>();
 
         LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(name!=null,Setmeal::getName,name);
+        lambdaQueryWrapper.orderByDesc(Setmeal::getUpdateTime);
+
         setmealService.page(setmealPage,lambdaQueryWrapper);
 
         List<Setmeal> records = setmealPage.getRecords();
@@ -63,6 +74,14 @@ public class SetmealController {
         setmealDtoPage.setRecords(lists);
 
         return R.success(setmealDtoPage);
+    }
+
+    @DeleteMapping
+    public R<String> deleteByIds(@RequestParam List<Long> ids)
+    {
+
+        setmealService.deleteByIds(ids);
+        return R.success("删除操作成功");
     }
 
 }
