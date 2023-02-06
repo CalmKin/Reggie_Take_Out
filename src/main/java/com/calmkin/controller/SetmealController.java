@@ -13,6 +13,7 @@ import com.calmkin.service.SetmealDishService;
 import com.calmkin.service.SetmealService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -141,7 +142,29 @@ public class SetmealController {
     }
 
 
-    
+    @Transactional
+    @PutMapping
+    public R<String> update(@RequestBody SetmealDto setmealDto)
+    {
 
+        //先把套餐的信息存进setmeal表里面（直接用dto来存）
+        setmealService.updateById(setmealDto);
 
+        //然后在setmealdish里面将所有关联信息都删掉
+        LambdaQueryWrapper<SetmealDish> lqw = new LambdaQueryWrapper<>();
+
+        lqw.eq(SetmealDish::getSetmealId,setmealDto.getId());
+        setmealDishService.remove(lqw);
+
+        //再重新插入关联信息
+        List<SetmealDish> setmealDishes = setmealDto.getSetmealDishes();
+
+        List<SetmealDish> collect = setmealDishes.stream().map((item) -> {
+            item.setSetmealId(setmealDto.getId());
+            return item;
+        }).collect(Collectors.toList());
+
+        setmealDishService.saveBatch(collect);
+        return R.success("信息修改成功");
+    }
 }
