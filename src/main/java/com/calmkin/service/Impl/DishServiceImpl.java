@@ -29,7 +29,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish>
     private DishFlavorService dishFlavorService;
 
     /**
-     * 公共方法，用于判断某个菜品是否关联了套餐
+     * 公共方法，用于判断某个菜品是否关联了套餐，返回false表示关联了套餐
      * @param dish
      * @return
      */
@@ -156,6 +156,30 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish>
         }
 
         this.updateBatchById(dishes);
+        if(!check)
+            return true;
+        return false;
+    }
+
+    @Override
+    public boolean deldeteBatchs(List<Long> ids) {
+        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Dish::getId,ids);
+        List<Dish> dishes = this.listByIds(ids);
+
+        boolean check = false;
+
+        for(int i=0;i<dishes.size();i++)
+        {
+            Dish dish = dishes.get(i);
+            boolean results=false;
+            results = this.check(dish);
+
+            if (results)    //如果没有关联套餐，可以直接删除
+                this.removeById(dish.getId());
+            else check=true;
+        }
+
         if(!check)
             return true;
         return false;

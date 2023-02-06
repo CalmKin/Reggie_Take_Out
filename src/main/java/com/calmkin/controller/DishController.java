@@ -156,7 +156,7 @@ public class DishController {
         boolean result = dishService.changeBatchStatusByIds(targetStatus, ids);
         if(result)
             return R.success("禁用菜品成功");
-        return R.error("部分菜品禁用失败(已关联套餐)");
+        return R.success("部分菜品禁用失败(已关联套餐)");
     }
 
     /**
@@ -168,9 +168,11 @@ public class DishController {
     public R<String> deleteByIds(@RequestParam List<Long> ids)
     {
 
-        
+        boolean results = dishService.deldeteBatchs(ids);
 
-        return null;
+        if(results)
+            return R.success("删除菜品成功");
+        return R.success("部分菜品删除失败(已关联套餐)");
     }
 
 }

@@ -18,5 +18,7 @@ public interface DishService extends IService<Dish> {
 
     public boolean changeBatchStatusByIds(int targetStatus, List<Long> ids);
 
+    public boolean deldeteBatchs(List<Long> ids);
+
     public  boolean check(Dish dish);
 }
