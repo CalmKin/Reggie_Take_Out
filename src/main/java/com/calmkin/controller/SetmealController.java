@@ -27,6 +27,11 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * 添加套餐功能
+     * @param setmealDto
+     * @return
+     */
     @PostMapping
     public R<String> uploadWithDishes(@RequestBody SetmealDto setmealDto)
     {
@@ -51,7 +56,7 @@ public class SetmealController {
 
         LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.like(name!=null,Setmeal::getName,name);
-        lambdaQueryWrapper.orderByDesc(Setmeal::getUpdateTime);
+        lambdaQueryWrapper.orderByDesc(Setmeal::getStatus).orderByDesc(Setmeal::getUpdateTime);
 
         setmealService.page(setmealPage,lambdaQueryWrapper);
 
@@ -76,6 +81,11 @@ public class SetmealController {
         return R.success(setmealDtoPage);
     }
 
+    /**
+     * 批量删除套餐，但是只有停售的套餐才能被删除
+     * @param ids
+     * @return
+     */
     @DeleteMapping
     public R<String> deleteByIds(@RequestParam List<Long> ids)
     {
@@ -83,5 +93,25 @@ public class SetmealController {
         setmealService.deleteByIds(ids);
         return R.success("删除操作成功");
     }
+
+    @PostMapping("/status/{targetStatus}")
+    public R<String> changeStatus(@PathVariable int targetStatus,@RequestParam List<Long> ids)
+    {
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Setmeal::getId,ids);
+
+        List<Setmeal> list = setmealService.list(queryWrapper);
+
+        list=list.stream().map((item)->{
+            item.setStatus(targetStatus);
+            return item;
+        }).collect(Collectors.toList());
+
+        setmealService.updateBatchById(list);
+
+        return R.success("修改套餐状态成功");
+    }
+
+
 
 }
