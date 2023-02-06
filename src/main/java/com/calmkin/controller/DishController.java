@@ -6,8 +6,12 @@ import com.calmkin.common.R;
 import com.calmkin.dto.DishDto;
 import com.calmkin.pojo.Category;
 import com.calmkin.pojo.Dish;
+import com.calmkin.pojo.Setmeal;
+import com.calmkin.pojo.SetmealDish;
 import com.calmkin.service.CategoryService;
 import com.calmkin.service.DishService;
+import com.calmkin.service.SetmealDishService;
+import com.calmkin.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,6 +32,12 @@ public class DishController {
 
     @Autowired
     private CategoryService categoryService;    //用于设置dishDTO的分页数据查询用的
+
+    @Autowired
+    private SetmealService setmealService;
+
+    @Autowired
+    private SetmealDishService setmealDishService;
 
     /**
      * 新增菜品功能
@@ -134,7 +145,7 @@ public class DishController {
 
 
     /**
-     * 批量进行禁用菜品
+     * 批量进行禁用菜品,但是要先看是否存在菜品关联了某个套餐，而且是正在起售的，那么我们就不禁用这些菜品
      * @param targetStatus
      * @param ids
      * @return
@@ -142,20 +153,25 @@ public class DishController {
     @PostMapping("/status/{targetStatus}")
     public R<String> changeStatusByIds(@PathVariable int targetStatus,@RequestParam List<Long> ids)
     {
-        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.in(Dish::getId,ids);
-
-        List<Dish> dishes = dishService.listByIds(ids);
-
-        dishes=dishes.stream().map((item)->{
-            item.setStatus(targetStatus);
-            return item;
-        }).collect(Collectors.toList());
-
-        dishService.updateBatchById(dishes);
-        
-        return R.success("禁用菜品成功");
+        boolean result = dishService.changeBatchStatusByIds(targetStatus, ids);
+        if(result)
+            return R.success("禁用菜品成功");
+        return R.error("部分菜品禁用失败(已关联套餐)");
     }
+
+    /**
+     *
+     * @param ids
+     * @return
+     */
+
+//    @DeleteMapping
+//    public R<String> deleteByIds(@RequestParam List<Long> ids)
+//    {
+//        LambdaQueryWrapper<>
+//
+//
+//    }
 
 }
 
