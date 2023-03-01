@@ -83,6 +83,18 @@ public class ShoppingCartController {
     }
 
 
-
+    /**
+     * 根据用户id，清空该用户购物车
+     * 请求网址: http://localhost:8080/shoppingCart/clean
+     * @return
+     */
+    @DeleteMapping("/clean")
+    public R<String> clear()
+    {
+        LambdaQueryWrapper<ShoppingCart> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(ShoppingCart::getUserId,BaseContext.getID());
+        service.remove(lqw);
+        return R.success("清空购物车成功");
+    }
 
 }
