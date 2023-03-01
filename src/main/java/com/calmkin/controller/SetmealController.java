@@ -167,4 +167,24 @@ public class SetmealController {
         setmealDishService.saveBatch(collect);
         return R.success("信息修改成功");
     }
+
+    /**
+     * http://localhost:8080/setmeal/list?categoryId=1622447465650585601&status=1
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> getList(Setmeal setmeal)
+    {
+        LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();
+
+        lqw.eq(setmeal.getCategoryId()!=null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        lqw.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
+        lqw.orderByDesc(Setmeal::getUpdateTime);
+
+        List<Setmeal> list = setmealService.list(lqw);
+
+        return R.success(list);
+
+    }
+
 }
