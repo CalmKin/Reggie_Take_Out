@@ -1,5 +1,6 @@
 package com.calmkin.controller;
 
+import com.aliyun.credentials.http.HttpRequest;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.calmkin.common.BaseContext;
 import com.calmkin.common.R;
@@ -7,6 +8,9 @@ import com.calmkin.pojo.ShoppingCart;
 import com.calmkin.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/shoppingCart")
@@ -47,6 +51,7 @@ public class ShoppingCartController {
         if(one==null)
         {
             shoppingCart.setNumber(1); //初始情况第一次添加需要设置数量为1
+            shoppingCart.setCreateTime(LocalDateTime.now());
             service.save(shoppingCart);
             one = shoppingCart;
         }
@@ -59,6 +64,24 @@ public class ShoppingCartController {
         }
         return R.success(one);
     }
+
+    /**
+     * 根据用户的id，显示用户购物车信息，每次对购物车进行操作的时候，都会重新执行一次这个查询，以更新信息
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<ShoppingCart>> getList()
+    {
+        LambdaQueryWrapper<ShoppingCart> lqw = new LambdaQueryWrapper<>();
+        //根据用户id来查询购物车
+        lqw.eq(ShoppingCart::getUserId,BaseContext.getID());
+        lqw.orderByDesc(ShoppingCart::getCreateTime);
+
+        List<ShoppingCart> list = service.list(lqw);
+
+        return R.success(list);
+    }
+
 
 
 
