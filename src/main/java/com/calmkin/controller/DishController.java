@@ -4,14 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.calmkin.common.R;
 import com.calmkin.dto.DishDto;
-import com.calmkin.pojo.Category;
-import com.calmkin.pojo.Dish;
-import com.calmkin.pojo.Setmeal;
-import com.calmkin.pojo.SetmealDish;
-import com.calmkin.service.CategoryService;
-import com.calmkin.service.DishService;
-import com.calmkin.service.SetmealDishService;
-import com.calmkin.service.SetmealService;
+import com.calmkin.pojo.*;
+import com.calmkin.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +32,9 @@ public class DishController {
 
     @Autowired
     private SetmealDishService setmealDishService;
+
+    @Autowired
+    private DishFlavorService dishFlavorService;
 
     /**
      * 新增菜品功能
@@ -123,12 +120,13 @@ public class DishController {
     }
 
     /**
-     * 根据菜品分类查询所有菜品
+     * 根据菜品分类查询所有菜品（第一次返回list<Dish>,后面返回list<DishDto>，否则前端无法展示选择规格）
+     * 移动端二次修改
      * @param dish
      * @return
      */
     @GetMapping("/list")
-    public R<List<Dish>> getDishes(Dish dish)
+    public R<List<DishDto>> getDishes(Dish dish)
     {
 
         LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -140,7 +138,21 @@ public class DishController {
         lambdaQueryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(lambdaQueryWrapper);
 
-        return R.success(list);
+        List<DishDto> dishDtoList = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item,dishDto);
+
+            LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+
+            lqw.eq(DishFlavor::getDishId,item.getId());
+            List<DishFlavor> flavors = dishFlavorService.list(lqw);
+
+            dishDto.setFlavors(flavors);
+
+            return dishDto;
+        }).collect(Collectors.toList());
+
+        return R.success(dishDtoList);
     }
 
 
