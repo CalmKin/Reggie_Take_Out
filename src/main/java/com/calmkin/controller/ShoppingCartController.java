@@ -97,4 +97,42 @@ public class ShoppingCartController {
         return R.success("清空购物车成功");
     }
 
+    /**
+     * 减少该物品在购物车中的数量
+     * 如果数量大于1，那么直接修改数量
+     * 否则直接将这个物品从购物车中删除
+     * 因为请求发送的是菜品的id或者套餐的id
+     * 所以直接用购物车实体类来接收这两个参数
+     * @param shoppingCart
+     * @return
+     */
+    @PostMapping("/sub")
+    public R<String> subOne(@RequestBody ShoppingCart shoppingCart)
+    {
+        LambdaQueryWrapper<ShoppingCart> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(ShoppingCart::getUserId,BaseContext.getID());
+
+        if(shoppingCart.getDishId()!=null)
+        {
+            lqw.eq(ShoppingCart::getDishId,shoppingCart.getDishId());
+        }
+        else
+        {
+            lqw.eq(ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
+        }
+
+        ShoppingCart one = service.getOne(lqw);
+
+        if(one.getNumber()==1)
+        {
+            service.remove(lqw);
+        }
+        else
+        {
+            Integer number = one.getNumber();
+            one.setNumber(number-1);
+            service.updateById(one);
+        }
+        return R.success("减少数量成功");
+    }
 }
