@@ -4,4 +4,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.calmkin.pojo.Orders;
 
 public interface OrdersService extends IService<Orders> {
+    boolean submitPay(Orders orders);
 }
