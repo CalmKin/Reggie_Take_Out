@@ -117,9 +117,9 @@
                                 let number = 0
                                 item.orderDetails.forEach(ele=>{
                                     number += ele.number
-                                })
+                                });
                                 item.sumNum = number
-                            })
+                            });
                         }
                         this.loading = false;
                         if(this.paging.page >= res.data.pages){

@@ -19,5 +19,5 @@ public class OrdersDto extends Orders {
  * + sumNum
  * amount
  */
-   private List<OrderDetail> list;
+   private List<OrderDetail> orderDetails;
 }

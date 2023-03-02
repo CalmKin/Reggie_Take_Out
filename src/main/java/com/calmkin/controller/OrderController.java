@@ -81,7 +81,7 @@ public class OrderController {
             LambdaQueryWrapper<OrderDetail> detail = new LambdaQueryWrapper<>();
             detail.eq(OrderDetail::getOrderId, orderId);
             List<OrderDetail> detailList = detailService.list(detail);
-            dto.setList(detailList);
+            dto.setOrderDetails(detailList);
             return dto;
         }).collect(Collectors.toList());
 
